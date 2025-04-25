@@ -2,4 +2,12 @@ include:
   template: Terraform/Base.latest.gitlab-ci.yml
 
 stages:
+  - validate
+  - build
   - terraform
+
+validate:
+  extends: .terraform:validate
+
+plan:
+  extends: .terraform:build
