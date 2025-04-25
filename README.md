@@ -1,6 +1,11 @@
 # terraform-rds-lambda-rotation
 Provision an AWS RDS Postgres Database Instance via Terraform with Alternating User Secret Rotation via Lambda
 
+## Requirements
+
+- AWS CLI
+- Terraform
+
 ## GitLab Terraform State
 
 Create a Personal Access Token from GitLab
@@ -20,3 +25,7 @@ terraform init \
     -backend-config="unlock_method=DELETE" \
     -backend-config="retry_wait_min=5"
 ```
+
+## AWS
+
+Run `aws configure` to set up your AWS credentials
