@@ -1,5 +1,6 @@
 variables:
   IGNORE_TF_DEPRECATION_WARNING: true
+  TF_STATE_NAME: default
 
 include:
   template: Terraform/Base.latest.gitlab-ci.yml
