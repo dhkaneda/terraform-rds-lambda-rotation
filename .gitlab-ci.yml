@@ -1,5 +1,5 @@
 include:
-  template: Terraform/Base.latest.yml
+  template: Terraform/Base.latest.gitlab-ci.yml
 
 stages:
   - terraform
