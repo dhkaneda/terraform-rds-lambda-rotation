@@ -4,20 +4,8 @@ variable "aws_region" {
   default     = "us-west-2"
 }
 
-variable "db_instance_identifier" {
-  description = "RDS instance identifier"
+variable "project_name" {
+  description = "Project name"
   type        = string
-  default     = "my-free-tier-db"
-}
-
-variable "db_username" {
-  description = "Master username for RDS"
-  type        = string
-  default     = "admin"
-}
-
-variable "db_name" {
-  description = "Database name"
-  type        = string
-  default     = "appdb"
+  default     = "galv-enterprise"
 }
