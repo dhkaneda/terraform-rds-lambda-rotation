@@ -1,7 +1,5 @@
 include:
-  template: OpenTofu.latest.gitlab-ci.yml
+  template: Terraform/Base.latest.gitlab-ci.yml
 
 stages:
-  - validate
-  - build
-  - deploy
+  - terraform
