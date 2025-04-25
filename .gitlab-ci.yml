@@ -4,10 +4,17 @@ include:
 stages:
   - validate
   - build
-  - terraform
+  - deploy
+  - cleanup
 
 validate:
   extends: .terraform:validate
 
 plan:
   extends: .terraform:build
+
+apply:
+  extends: .terraform:deploy
+
+destroy:
+  extends: .terraform:destroy
