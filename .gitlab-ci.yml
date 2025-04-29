@@ -1,7 +1,6 @@
 variables:
   IGNORE_TF_DEPRECATION_WARNING: true
-  TF_STATE_NAME: default
-
+  
 include:
   template: Terraform/Base.latest.gitlab-ci.yml
 
@@ -11,14 +10,23 @@ stages:
   - deploy
   - cleanup
 
-validate:
-  extends: .terraform:validate
+# validate:
+#   extends: .terraform:validate
 
-plan:
+db-plan:
+  variables:
+    TF_ROOT: ${CI_PROJECT_DIR}/db-infra
+    TF_STATE_NAME: default
   extends: .terraform:build
 
-apply:
-  extends: .terraform:deploy
+lambda-plan:
+  variables:
+    TF_ROOT: ${CI_PROJECT_DIR}/user-rotation
+    TF_STATE_NAME: default
+  extends: .terraform:build
 
-destroy:
-  extends: .terraform:destroy
+# apply:
+#   extends: .terraform:deploy
+
+# destroy:
+#   extends: .terraform:destroy
