@@ -16,13 +16,13 @@ stages:
 db-plan:
   variables:
     TF_ROOT: ${CI_PROJECT_DIR}/db-infra
-    TF_STATE_NAME: default
+    TF_STATE_NAME: rds
   extends: .terraform:build
 
 lambda-plan:
   variables:
     TF_ROOT: ${CI_PROJECT_DIR}/user-rotation
-    TF_STATE_NAME: default
+    TF_STATE_NAME: lambda
   extends: .terraform:build
 
 # apply:
