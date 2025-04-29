@@ -6,27 +6,70 @@ include:
 
 stages:
   - validate
-  - build
-  - deploy
+  - db
+  - user-setup
+  - user-rotation
   - cleanup
 
 # validate:
 #   extends: .terraform:validate
 
 db-plan:
+  stage: db
   variables:
     TF_ROOT: ${CI_PROJECT_DIR}/db-infra
     TF_STATE_NAME: rds
   extends: .terraform:build
 
-lambda-plan:
+db-deploy:
+  stage: db
+  variables:
+    TF_ROOT: ${CI_PROJECT_DIR}/db-infra
+    TF_STATE_NAME: rds
+  extends: .terraform:deploy
+
+
+wait_for_secret_arn:
+  stage: user-setup
+  dependencies:
+    - db-deploy
+  script:
+    - cd db-infra
+    # Wait for the secret ARN to be available in outputs
+    - |
+      for i in {1..30}; do
+        SECRET_ARN=$(terraform output -raw secret_arn 2>/dev/null || true)
+        if [[ -n "$SECRET_ARN" ]]; then
+          echo "Secret ARN is available: $SECRET_ARN"
+          echo "DB_MASTER_PW=$SECRET_ARN" > secret_arn.env
+          break
+        fi
+        echo "Waiting for secret ARN to become available..."
+        sleep 10
+      done
+      if [[ ! -s secret_arn.env ]]; then
+        echo "Secret ARN was not available after waiting."
+        exit 1
+      fi
+  artifacts:
+    reports:
+      dotenv: secret_arn.env
+    expire_in: 1 hour
+
+
+rotation-lambda-plan:
+  stage: user-rotation
+  dependencies:
+    - db-deploy
   variables:
     TF_ROOT: ${CI_PROJECT_DIR}/user-rotation
     TF_STATE_NAME: lambda
   extends: .terraform:build
+  
 
-# apply:
-#   extends: .terraform:deploy
+destroy-rotation-lambda:
+  extends: .terraform:destroy
 
-# destroy:
-#   extends: .terraform:destroy
+destroy-db:
+  extends: .terraform:destroy
+  needs: [ destroy-rotation-lambda ]
