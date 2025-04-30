@@ -62,8 +62,8 @@ rotation-lambda-plan:
 
 rotation-lambda-build:
   stage: user-rotation
-  needs: [ rotation-lambda-plan, db-deploy ]
-  dependencies: [ db-deploy ]
+  needs: [ rotation-lambda-plan ]
+  dependencies: [ rotation-lambda-plan, db-deploy ]
   variables:
     TF_ROOT: ${CI_PROJECT_DIR}/user-rotation
     TF_STATE_NAME: lambda
