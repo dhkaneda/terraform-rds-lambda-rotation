@@ -62,7 +62,7 @@ rotation-lambda-plan:
 
 rotation-lambda-build:
   stage: user-rotation
-  needs: [ rotation-lambda-plan ]
+  needs: [ rotation-lambda-plan, db-deploy ]
   dependencies: [ rotation-lambda-plan, db-deploy ]
   variables:
     TF_ROOT: ${CI_PROJECT_DIR}/user-rotation
