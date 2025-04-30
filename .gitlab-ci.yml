@@ -23,8 +23,8 @@ db-plan:
 
 db-deploy:
   stage: db
-  dependencies:
-    - db-plan
+  needs: [ db-plan ]
+  dependencies: [ db-plan ] 
   variables:
     TF_ROOT: ${CI_PROJECT_DIR}/db-infra
     TF_STATE_NAME: rds
