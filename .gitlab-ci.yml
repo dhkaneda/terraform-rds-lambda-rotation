@@ -23,34 +23,29 @@ db-plan:
 
 db-deploy:
   stage: db
+  dependencies:
+    - db-plan
   variables:
     TF_ROOT: ${CI_PROJECT_DIR}/db-infra
     TF_STATE_NAME: rds
   extends: .terraform:deploy
-
-
-wait_for_secret_arn:
-  stage: user-setup
-  dependencies:
-    - db-deploy
   script:
-    - cd db-infra
-    # Wait for the secret ARN to be available in outputs
+    - gitlab-terraform apply
     - |
-      for i in {1..30}; do
-        SECRET_ARN=$(terraform output -raw secret_arn 2>/dev/null || true)
-        if [[ -n "$SECRET_ARN" ]]; then
-          echo "Secret ARN is available: $SECRET_ARN"
-          echo "DB_MASTER_PW=$SECRET_ARN" > secret_arn.env
-          break
+        for i in {1..30}; do
+          SECRET_ARN=$(terraform output -raw secret_arn 2>/dev/null || true)
+          if [[ -n "$SECRET_ARN" ]]; then
+            echo "Secret ARN is available: $SECRET_ARN"
+            echo "DB_MASTER_PW=$SECRET_ARN" > secret_arn.env
+            break
+          fi
+          echo "Waiting for secret ARN to become available..."
+          sleep 10
+        done
+        if [[ ! -s secret_arn.env ]]; then
+          echo "Secret ARN was not available after waiting."
+          exit 1
         fi
-        echo "Waiting for secret ARN to become available..."
-        sleep 10
-      done
-      if [[ ! -s secret_arn.env ]]; then
-        echo "Secret ARN was not available after waiting."
-        exit 1
-      fi
   artifacts:
     reports:
       dotenv: secret_arn.env
@@ -65,6 +60,16 @@ rotation-lambda-plan:
     TF_ROOT: ${CI_PROJECT_DIR}/user-rotation
     TF_STATE_NAME: lambda
   extends: .terraform:build
+
+rotation-lambda-build:
+  stage: user-rotation
+  dependencies:
+    - db-deploy
+    - rotation-lambda-plan
+  variables:
+    TF_ROOT: ${CI_PROJECT_DIR}/user-rotation
+    TF_STATE_NAME: lambda
+  extends: .terraform:deploy
   
 
 destroy-rotation-lambda:
