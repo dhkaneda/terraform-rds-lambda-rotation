@@ -4,7 +4,7 @@ resource "aws_s3_bucket" "lambda" {
 
 resource "aws_s3_object" "test_arn" {
   bucket  = aws_s3_bucket.lambda.id
-  key     = secret_arn
+  key     = "secret_arn"
   content = var.rds_master_secret_arn
 }
 
