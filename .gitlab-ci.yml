@@ -7,7 +7,7 @@ include:
 stages:
   - validate
   - db
-  - user-setup
+  - db-setup
   - user-rotation
   - cleanup
 
@@ -32,25 +32,45 @@ db-deploy:
   script:
     - gitlab-terraform apply
     - |
-        for i in {1..30}; do
-          SECRET_ARN=$(gitlab-terraform output -raw secret_arn 2>/dev/null || true)
-          if [[ -n "$SECRET_ARN" ]]; then
-            echo "Secret ARN is available: $SECRET_ARN"
-            echo "TF_VAR_rds_master_secret_arn=$SECRET_ARN" > secret_arn.env
-            break
-          fi
-          echo "Waiting for secret ARN to become available..."
-          sleep 10
-        done
-        if [[ ! -s secret_arn.env ]]; then
-          echo "Secret ARN was not available after waiting."
-          exit 1
+      for i in {1..30}; do
+        SECRET_ARN=$(gitlab-terraform output -raw rds_master_secret_arn 2>/dev/null || true)
+        if [[ -n "$SECRET_ARN" ]]; then
+          echo "Secret ARN is available: $SECRET_ARN"
+          break
         fi
+        echo "Waiting for secret ARN to become available..."
+        sleep 10
+      done
+      if [[ -z "$SECRET_ARN" ]]; then
+        echo "Secret ARN was not available after waiting."
+        exit 1
+      fi
+
+      # Export all outputs as TF_VAR_ variables to .env
+      gitlab-terraform output | while IFS=' = ' read -r key value; do
+        # Remove quotes from value if present
+        clean_value=$(echo "$value" | sed -e 's/^"//' -e 's/"$//')
+        # Only process non-empty keys and values
+        if [[ -n "$key" && -n "$clean_value" ]]; then
+          echo "TF_VAR_${key}=${clean_value}" >> all_outputs.env
+        fi
+      done
   artifacts:
     reports:
-      dotenv: secret_arn.env
+      dotenv: all_outputs.env
     expire_in: 1 hour
 
+
+db-setup:
+  stage: db-setup
+  image: postgres:14
+  dependencies: [ db-deploy ]
+  script:
+    - set -euo pipefail
+    - apt-get update && apt-get install -y awscli jq
+    - chmod +x db-setup/setup.sh
+    - ./db-setup/setup.sh
+  needs: [ db-deploy ]
 
 rotation-lambda-plan:
   stage: user-rotation

@@ -33,10 +33,6 @@ data "aws_db_subnet_group" "default_subnet_group" {
   name = "default-${aws_default_vpc.default.id}"
 }
 
-output "default_subnet_group_name" {
-  value = data.aws_db_subnet_group.default_subnet_group.name
-}
-
 resource "aws_db_parameter_group" "custom" {
   name   = var.project_name
   family = "postgres14"

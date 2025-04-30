@@ -11,6 +11,6 @@ variable "project_name" {
 }
 
 variable "rds_master_secret_arn" {
-  description = "ARN of the RDS instance master secret stored in Secrets Manager"
+  description = "RDS master user password (from Secrets Manager, ARN)"
   type        = string
 }
