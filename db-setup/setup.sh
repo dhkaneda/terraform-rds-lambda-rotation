@@ -37,8 +37,8 @@ setup_db() {
 }
 
 # Setup and seed each DB
-setup_db animals ../db-setup/seed-pg-animals.sql
-setup_db automobiles ../db-setup/seed-pg-autos.sql
+setup_db animals seed-pg-animals.sql
+setup_db automobiles seed-pg-autos.sql
 
 # Create app user if not exists, and set password
 echo "Ensuring user $APP_USER exists..."

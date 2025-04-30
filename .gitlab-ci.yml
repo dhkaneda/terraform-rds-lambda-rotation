@@ -68,8 +68,9 @@ db-setup:
   script:
     - set -euo pipefail
     - apt-get update && apt-get install -y awscli jq
-    - chmod +x db-setup/setup.sh
-    - ./db-setup/setup.sh
+    - cd db-setup
+    - chmod +x setup.sh
+    - ./setup.sh
   needs: [ db-deploy ]
 
 rotation-lambda-plan:
