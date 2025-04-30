@@ -36,7 +36,7 @@ db-deploy:
           SECRET_ARN=$(gitlab-terraform output -raw secret_arn 2>/dev/null || true)
           if [[ -n "$SECRET_ARN" ]]; then
             echo "Secret ARN is available: $SECRET_ARN"
-            echo "DB_MASTER_PW=$SECRET_ARN" > secret_arn.env
+            echo "TF_VAR_rds_master_secret_arn=$SECRET_ARN" > secret_arn.env
             break
           fi
           echo "Waiting for secret ARN to become available..."
