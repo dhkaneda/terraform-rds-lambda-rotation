@@ -91,7 +91,7 @@ lambda-deploy:
     - zip -r build.zip .
   artifacts:
     paths:
-      - user-rotation/
+      - user-rotation/lambda/build.zip
     expire_in: 1 hour
 
 rotation-plan:
@@ -105,8 +105,8 @@ rotation-plan:
 
 rotation-build:
   stage: user-rotation
-  needs: [ rotation-plan, db-deploy ]
-  dependencies: [ rotation-plan, db-deploy ]
+  needs: [ lambda-deploy, rotation-plan ]
+  dependencies: [ lambda-deploy, rotation-plan ]
   variables:
     TF_ROOT: ${CI_PROJECT_DIR}/user-rotation
     TF_STATE_NAME: lambda
