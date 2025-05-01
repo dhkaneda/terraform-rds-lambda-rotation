@@ -11,6 +11,27 @@ stages:
   - user-rotation
   - cleanup
 
+lambda-build:
+  stage: user-rotation
+  image: python:3.11
+  script:
+    - cd user-rotation/lambda
+    - pip install --upgrade pip
+    - pip install -r requirements.txt -t .
+    - git clone --no-checkout https://github.com/jkehler/awslambda-psycopg2.git
+    - cd awslambda-psycopg2
+    - git sparse-checkout init --cone
+    - git sparse-checkout set "psycopg2-3.11"
+    - git checkout
+    - cd ..
+    - cp -r awslambda-psycopg2/psycopg2-3.11/* .
+    - apt-get update && apt-get install -y zip
+    - zip -r build.zip .
+  artifacts:
+    paths:
+      - user-rotation/
+    expire_in: 1 hour
+
 # validate:
 #   extends: .terraform:validate
 
