@@ -11,27 +11,6 @@ stages:
   - user-rotation
   - cleanup
 
-lambda-build:
-  stage: user-rotation
-  image: python:3.11
-  script:
-    - cd user-rotation/lambda
-    - pip install --upgrade pip
-    - pip install -r requirements.txt -t .
-    - git clone --no-checkout https://github.com/jkehler/awslambda-psycopg2.git
-    - cd awslambda-psycopg2
-    - git sparse-checkout init --cone
-    - git sparse-checkout set "psycopg2-3.11"
-    - git checkout
-    - cd ..
-    - cp -r awslambda-psycopg2/psycopg2-3.11/* .
-    - apt-get update && apt-get install -y zip
-    - zip -r build.zip .
-  artifacts:
-    paths:
-      - user-rotation/
-    expire_in: 1 hour
-
 # validate:
 #   extends: .terraform:validate
 
@@ -94,18 +73,40 @@ db-setup:
     - ./setup.sh
   needs: [ db-deploy ]
 
-rotation-lambda-plan:
+lambda-deploy:
   stage: user-rotation
-  dependencies: [ db-deploy ]
+  image: python:3.11
+  script:
+    - cd user-rotation/lambda
+    - pip install --upgrade pip
+    - pip install -r requirements.txt -t .
+    - git clone --no-checkout https://github.com/jkehler/awslambda-psycopg2.git
+    - cd awslambda-psycopg2
+    - git sparse-checkout init --cone
+    - git sparse-checkout set "psycopg2-3.11"
+    - git checkout
+    - cd ..
+    - cp -r awslambda-psycopg2/psycopg2-3.11/* .
+    - apt-get update && apt-get install -y zip
+    - zip -r build.zip .
+  artifacts:
+    paths:
+      - user-rotation/
+    expire_in: 1 hour
+
+rotation-plan:
+  stage: user-rotation
+  needs: [ db-deploy, lambda-deploy ]
+  dependencies: [ db-deploy, lambda-deploy ]
   variables:
     TF_ROOT: ${CI_PROJECT_DIR}/user-rotation
     TF_STATE_NAME: lambda
   extends: .terraform:build
 
-rotation-lambda-build:
+rotation-build:
   stage: user-rotation
-  needs: [ rotation-lambda-plan, db-deploy ]
-  dependencies: [ rotation-lambda-plan, db-deploy ]
+  needs: [ rotation-plan, db-deploy ]
+  dependencies: [ rotation-plan, db-deploy ]
   variables:
     TF_ROOT: ${CI_PROJECT_DIR}/user-rotation
     TF_STATE_NAME: lambda
