@@ -1,11 +1,9 @@
 CREATE TABLE IF NOT EXISTS animals (
   id BIGSERIAL PRIMARY KEY,
   name TEXT,
-  species TEXT,
-  age INT,
-  birthdate TIMESTAMP,
+  type VARCHAR(255) NOT NULL,  -- Matches @Enumerated(EnumType.STRING)
   description TEXT,
-  type TEXT
+  birthdate DATE  -- Matches Date type in JPA
 );
 
 INSERT INTO animals (birthdate, description, name, type) VALUES ('2022-10-11 17:43:55', 'A playful and energetic companion.', 'Ellie', 'CAT');
