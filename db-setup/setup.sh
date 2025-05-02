@@ -31,6 +31,24 @@ done
 setup_db() {
   local DB="$1"
   local SEED_SQL="$2"
+  local TABLE_NAME=$(echo "$SEED_SQL" | sed 's/.*\(seed-pg-\(.*\)\.sql\).*/\2/')
+
+  # Get table existence status
+  local EXISTS=$(psql -d "$DB" -t -c "\
+    SELECT EXISTS (\
+      SELECT 1 \
+      FROM information_schema.tables \
+      WHERE table_schema = 'public' \
+      AND table_name = '$TABLE_NAME'\
+    )")
+
+  # Remove any extra whitespace
+  EXISTS=$(echo "$EXISTS" | tr -d '[:space:]')
+
+  if [ "$EXISTS" = "t" ]; then
+    echo "Table $TABLE_NAME already exists in database $DB. Skipping seeding."
+    return 0
+  fi
 
   echo "Seeding data (and schema if needed) from $SEED_SQL into $DB..."
   psql -d "$DB" -f "$SEED_SQL"
@@ -38,7 +56,7 @@ setup_db() {
 
 # Setup and seed each DB
 setup_db animals seed-pg-animals.sql
-setup_db automobiles seed-pg-autos.sql
+setup_db automobiles seed-pg-automobiles.sql
 
 # Create app user if not exists, and set password
 echo "Ensuring user $APP_USER exists..."
