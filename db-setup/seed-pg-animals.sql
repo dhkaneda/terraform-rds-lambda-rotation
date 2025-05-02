@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS animals (
   name TEXT,
   type VARCHAR(255) NOT NULL,  -- Matches @Enumerated(EnumType.STRING)
   description TEXT,
-  birthdate DATE  -- Matches Date type in JPA
+  birthdate TIMESTAMP  -- Matches Date type in JPA
 );
 
 INSERT INTO animals (birthdate, description, name, type) VALUES ('2022-10-11 17:43:55', 'A playful and energetic companion.', 'Ellie', 'CAT');

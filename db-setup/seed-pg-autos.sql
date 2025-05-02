@@ -4,14 +4,14 @@ CREATE TABLE IF NOT EXISTS automobiles (
   make TEXT,
   model TEXT,
   owner_name TEXT,
-  purchase_date DATE,
+  purchase_date TIMESTAMP,
   vin TEXT,
   model_year INT
 );
 
-INSERT INTO automobiles (color, make, model, owner_name, purchase_date, vin, model_year) VALUES ('Yellow', 'Toyota', 'Prius', 'Stephen Martinez', '2022-10-25', '1HGCM82633A160826', 2021);
-INSERT INTO automobiles (color, make, model, owner_name, purchase_date, vin, model_year) VALUES ('Black', 'Chevrolet', 'Malibu', 'Katie Little', '2023-03-31', '1HGCM82633A797310', 2006);
-INSERT INTO automobiles (color, make, model, owner_name, purchase_date, vin, model_year) VALUES ('Silver', 'BMW', 'X3', 'Tiffany Hebert', '2018-07-28', '1HGCM82633A709983', 2015);
+INSERT INTO automobiles (color, make, model, owner_name, purchase_date, vin, model_year) VALUES ('Yellow', 'Toyota', 'Prius', 'Stephen Martinez', '2022-10-25 12:00:00', '1HGCM82633A160826', 2021);
+INSERT INTO automobiles (color, make, model, owner_name, purchase_date, vin, model_year) VALUES ('Black', 'Chevrolet', 'Malibu', 'Katie Little', '2023-03-31 14:30:00', '1HGCM82633A797310', 2006);
+INSERT INTO automobiles (color, make, model, owner_name, purchase_date, vin, model_year) VALUES ('Silver', 'BMW', 'X3', 'Tiffany Hebert', '2018-07-28 09:00:00', '1HGCM82633A709983', 2015);
 INSERT INTO automobiles (color, make, model, owner_name, purchase_date, vin, model_year) VALUES ('Silver', 'Honda', 'Civic', 'Christian Taylor', '2021-12-28', '1HGCM82633A240910', 2019);
 INSERT INTO automobiles (color, make, model, owner_name, purchase_date, vin, model_year) VALUES ('Green', 'Nissan', 'Sentra', 'Jodi Patel', '2020-02-14', '1HGCM82633A958210', 2014);
 INSERT INTO automobiles (color, make, model, owner_name, purchase_date, vin, model_year) VALUES ('Blue', 'Toyota', 'Highlander', 'Christopher Ross', '2022-06-26', '1HGCM82633A554195', 2000);
