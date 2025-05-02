@@ -19,7 +19,7 @@ user-rotation/lambda/psycopg2_binary.libs
 user-rotation/lambda/s3transfer
 user-rotation/lambda/urllib3
 user-rotation/lambda/six.py
-
+*/all_outputs.env
 *.pyc
 __pycache__/
 .env

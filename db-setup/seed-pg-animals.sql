@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS animals (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   name TEXT,
   species TEXT,
   age INT,

@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS automobiles (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   color TEXT,
   make TEXT,
   model TEXT,
